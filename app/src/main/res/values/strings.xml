@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Shows</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="next_episode">Next Episode</string>
+</resources>
