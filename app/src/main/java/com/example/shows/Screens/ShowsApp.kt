@@ -20,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.shows.R
 
 @Composable
-fun ShowsApp(
+fun ShowssApp(
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier
 ){

@@ -1,30 +1,48 @@
 package com.example.shows.data
 
-import com.example.shows.data.local.ShowsDao
-import com.example.shows.network.ShowsApi
-import com.example.shows.network.response.searchresult.SearchResultItem
-import com.example.shows.network.response.show.Show
-import com.example.shows.network.response.showEpisode.ShowEpisode
-import javax.inject.Inject
-import javax.inject.Singleton
+
+
+import com.example.shows.network.response.SearchShow
+import com.example.shows.network.response.ShowEpisode
+import com.example.shows.network.response.ShowResult
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.http.path
+
 
 interface ShowsRepository {
-    suspend fun searchShows(showName: String): List<SearchResultItem>
+    suspend fun searchShows(showName: String): List<ShowResult>
     suspend fun getEpisodeInfo(episode: String): ShowEpisode
-    suspend fun getShow(id: Int): Show
+
+    suspend fun getShow(showId: Int): SearchShow
 }
 
 
-class RemoteShowsRepository (val retrofitService: ShowsApi): ShowsRepository{
-    override suspend  fun searchShows(showName: String): List<SearchResultItem> {
-        return retrofitService.searchShows(showName)
+class RemoteShowsRepository (val client: HttpClient): ShowsRepository{
+    override suspend  fun searchShows(showName: String): List<ShowResult> {
+//        return retrofitService.searchShows(showName)
+        return client.get{
+            url {
+                path("search/shows")
+                parameters.append("q",showName)
+            }
+        }.body()
     }
 
     override suspend fun getEpisodeInfo(episode: String): ShowEpisode {
-        return retrofitService.getEpisode(episode)
+        return client.get {
+            url {
+                path("episodes/${episode}")
+            }
+        }.body()
     }
 
-    override suspend fun getShow(id: Int): Show {
-        return retrofitService.getShow(id)
+    override suspend fun getShow(showId: Int): SearchShow {
+        return client.get {
+            url {
+                path("shows/${showId}")
+            }
+        }.body()
     }
 }

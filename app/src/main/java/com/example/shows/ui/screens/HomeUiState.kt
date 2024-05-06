@@ -1,8 +1,10 @@
 package com.example.shows.ui.screens
 
-import com.example.shows.network.response.searchresult.SearchResultItem
+
+import com.example.shows.network.response.ShowResult
+
 
 data class HomeUiState(
     val searchTerm: String = "",
-    val results: List<SearchResultItem> = listOf(),
+    val results: List<ShowResult> = listOf(),
 )

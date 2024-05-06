@@ -18,6 +18,6 @@ interface ShowsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun saveShow(show: Show)
-    @Query("SELECT * FROM show WHERE show_id=:id")
+    @Query("SELECT * FROM show WHERE id =:id")
     fun getShow(id: Int): Show
 }

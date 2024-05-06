@@ -36,7 +36,9 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.shows.R
-import com.example.shows.network.response.searchresult.Show
+import com.example.shows.data.local.Show
+import com.example.shows.network.response.SearchShow
+import com.example.shows.network.response.ShowResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -44,7 +46,7 @@ import org.jsoup.Jsoup
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchShow(getShow: (Int)-> Unit,inDb: Boolean,deleteShow: (com.example.shows.data.local.Show)-> Unit,show: Show, saveShow: (Int, String)-> Unit ,modifier: Modifier = Modifier) {
+fun SearchShow(onClickItem: () -> Unit,changeCurrentShow: (SearchShow) -> Unit,deleteShow: (Show)-> Unit,inDb: Boolean,show: SearchShow, saveShow: (Int, String)-> Unit ,modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val haptics = LocalHapticFeedback.current
     var job: Job? = null
@@ -56,12 +58,16 @@ fun SearchShow(getShow: (Int)-> Unit,inDb: Boolean,deleteShow: (com.example.show
         .height(115.dp)
         .fillMaxWidth()
         .padding(8.dp)
-        ) {
-        if(showDialog){
-            AlertDialog(onDismissRequest = { showDialog = false }) {
-                Text(show?.summary?.removeHtml() ?: "No summary")
-            }
+        .clickable {
+            onClickItem()
+            changeCurrentShow(show)
         }
+        ) {
+//        if(showDialog){
+//            AlertDialog(onDismissRequest = { showDialog = false }) {
+//                Text(show.summary?.removeHtml() ?: "No summary")
+//            }
+//        }
         Row(modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -73,21 +79,21 @@ fun SearchShow(getShow: (Int)-> Unit,inDb: Boolean,deleteShow: (com.example.show
                 contentScale = ContentScale.Fit
             )
             Column(modifier = Modifier.weight(2f)) {
-                Text(show.name ?: "Unknown title")
+                Text(show.name ?: "")
             }
-            Icon(
-                painter = painterResource(R.drawable.info),
-                contentDescription = null,
-                modifier = Modifier.clickable {
-                    showDialog = true
-                }
-            )
+//            Icon(
+//                painter = painterResource(R.drawable.info),
+//                contentDescription = null,
+//                modifier = Modifier.clickable {
+//                    showDialog = true
+//                }
+//            )
             Button(onClick = {
                 if (inDb){
                     val showId = show.id!!
-                    getShow(showId)
+                    deleteShow(show.toLocalShow())
                 } else {
-                    saveShow(show.id!!, show.name!!)
+                    if(show.id != null && show.name != null && show.name != "") saveShow(show.id, show.name)
                 }
             }){
                 Text( if (!inDb) "Add" else "remove")
@@ -101,9 +107,9 @@ fun String.removeHtml(): String{
     return Jsoup.parse(this).text()
 }
 
-fun Show.toLocalShow(): com.example.shows.data.local.Show{
+fun SearchShow.toLocalShow(): com.example.shows.data.local.Show{
     return com.example.shows.data.local.Show(
-        showId = id!!,
+        id = id!!,
         name = name!!
     )
 }

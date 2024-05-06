@@ -13,8 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.shows.ui.screens.home.HomeViewModel
 import com.example.shows.ui.screens.home.Home
+import com.example.shows.ui.screens.home.ShowsApp
 import com.example.shows.ui.theme.ShowsTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,11 +33,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
+                    val navController = rememberNavController()
                     val viewModel = hiltViewModel<HomeViewModel>()
-                    val favorites by viewModel.favorites.collectAsState()
-                    val isDarkTheme by viewModel.isDarkTheme.collectAsState()
-                    Home(viewModel::changeTheme,isDarkTheme,viewModel::getShow,viewModel.episodeState,viewModel::getEpisode,viewModel.homeUiState, viewModel::searchShows, viewModel::saveShow,viewModel::deleteShow,favorites)
-                    //ShowsApp()
+                    ShowsApp(navController,viewModel)
+                    //ShowssApp()
                 }
             }
         }

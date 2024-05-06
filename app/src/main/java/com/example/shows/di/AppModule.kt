@@ -12,15 +12,16 @@ import com.example.shows.data.local.FavoriteLocalRepository
 import com.example.shows.data.local.LocalRepository
 import com.example.shows.data.local.ShowsDao
 import com.example.shows.data.local.ShowsDatabase
-
-import com.example.shows.network.ShowsApi
-import com.example.shows.network.ShowsApi.Companion.BASE_URL
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -36,18 +37,24 @@ val Context.dataStore by preferencesDataStore(
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+
+
     @Singleton
     @Provides
-    fun provideRetrofitService(): ShowsApi {
-        val json = Json { ignoreUnknownKeys = true } // Set ignoreUnknownKeys to true
-        val ConverterFactory = json.asConverterFactory("application/json".toMediaType())
-        return Retrofit.Builder()
-            .addConverterFactory(ConverterFactory)
-            .baseUrl(BASE_URL)
-            .build()
-            .create(ShowsApi::class.java)
-
+    fun providesKtorClient(): HttpClient{
+        return HttpClient(OkHttp) {
+            install(ContentNegotiation) {
+                json(Json{
+                    ignoreUnknownKeys = true
+                })
+            }
+            defaultRequest {
+                url("https://api.tvmaze.com/")
+            }
+        }
     }
+
+
 
     @Singleton
     @Provides
@@ -65,8 +72,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideShowsRepository(api: ShowsApi): ShowsRepository {
-        return RemoteShowsRepository(api)
+    fun provideShowsRepository( client: HttpClient): ShowsRepository {
+        return RemoteShowsRepository(client)
     }
 
     @Singleton
