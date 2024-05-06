@@ -2,8 +2,8 @@
 
 # Screenshots:
 <div>
-  <img src="screenshots/searc.png" width="200" height="416" alt="search">
-  <img src="screenshots/show_inf.png" width="200" height="416" alt="show_info">
-  <img src="screenshots/next_episod.png" width="200" height="416" alt="next_episodeh">
+  <img src="screenshots/search.png" width="200" height="416" alt="search">
+  <img src="screenshots/show_info.png" width="200" height="416" alt="show_info">
+  <img src="screenshots/next_episode.png" width="200" height="416" alt="next_episodeh">
 </div>
 
