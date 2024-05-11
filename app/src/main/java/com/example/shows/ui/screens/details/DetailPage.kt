@@ -1,10 +1,14 @@
 package com.example.shows.ui.screens.details
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,15 +29,20 @@ import com.example.shows.util.removeHtml
 
 @Composable
 fun DetailPage(
-    viewModel: HomeViewModel,
+    setScaffoldAppBar: (String) -> Unit,
     currentShow: SearchShow?,
-    showSummary: String, showUrl:String?, favorites: List<Show>, onClickFollow: (Boolean, SearchShow) -> Unit, modifier: Modifier = Modifier) {
-    val inDatabase = favorites.find { it.id == viewModel.currentShow?.id } != null
-    viewModel.detailPagesTitle.value = currentShow?.name ?: ""
-    viewModel.setScaffoldAppBar("detailPage")
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    showSummary: String,
+    showUrl:String?,
+    favorites: List<Show>,
+    onClickFollow: (Boolean, SearchShow) -> Unit, modifier: Modifier = Modifier) {
+    val inDatabase = favorites.find { it.id == currentShow?.id } != null
+    setScaffoldAppBar("detailPage")
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
        if(showUrl != "" && showUrl != null){
-           ImageDetail(showUrl = showUrl)
+           ImageDetail(showUrl = showUrl, modifier = Modifier.fillMaxWidth())
        }
         Spacer(modifier = Modifier.height(16.dp))
         Row() {

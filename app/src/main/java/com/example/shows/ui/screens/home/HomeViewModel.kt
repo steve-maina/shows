@@ -72,6 +72,7 @@ class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository, va
             }
             appBar == "detailPage" -> {
                 appBarToShow.value = ScaffoldAppBar.BackAppBar
+                detailPagesTitle.value = currentShow?.name ?: ""
             }
 
             appBar == "favorites" -> {

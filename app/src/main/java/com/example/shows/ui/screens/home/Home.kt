@@ -194,12 +194,12 @@ fun HomeNavHost(viewModel: HomeViewModel) {
         }
         composable("detailPage") {
             DetailPage(
+                setScaffoldAppBar = viewModel::setScaffoldAppBar,
                 currentShow = viewModel.currentShow,
                 showSummary = viewModel.currentShow?.summary ?: "",
-                showUrl = viewModel.currentShow?.image?.medium,
+                showUrl = viewModel.currentShow?.image?.original,
                 favorites = favorites,
                 onClickFollow = viewModel::onClickFollow,
-                viewModel = viewModel,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
@@ -272,7 +272,6 @@ fun Home(
                         Text("Network Error")
                     }
                 }
-
             }
         }
     }
