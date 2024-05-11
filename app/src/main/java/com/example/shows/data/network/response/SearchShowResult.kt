@@ -1,4 +1,4 @@
-package com.example.shows.network.response
+package com.example.shows.data.network.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -51,3 +51,15 @@ data class ShowEpisode(
     val airdate: String ? = null,
     val summary: String? = null
 )
+
+@Serializable
+data class Episode(
+    val airdate: String? = null
+)
+
+fun SearchShow.toLocalShow(): com.example.shows.data.local.Show{
+    return com.example.shows.data.local.Show(
+        id = id!!,
+        name = name!!
+    )
+}

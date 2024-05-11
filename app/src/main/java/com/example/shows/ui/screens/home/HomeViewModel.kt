@@ -1,25 +1,22 @@
 package com.example.shows.ui.screens.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shows.data.ShowsRepository
+import com.example.shows.data.network.ShowsRepository
 import com.example.shows.data.local.LocalRepository
 import com.example.shows.data.local.Show
 import com.example.shows.data.local.UserPreferencesRepository
-import com.example.shows.network.response.SearchShow
+import com.example.shows.data.network.response.SearchShow
+import com.example.shows.data.network.response.toLocalShow
 import com.example.shows.ui.screens.HomeUiState
-import com.example.shows.ui.screens.components.removeHtml
-import com.example.shows.ui.screens.components.toLocalShow
+import com.example.shows.util.removeHtml
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -101,12 +98,6 @@ class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository, va
             localRepository.deleteShow(show)
         }
     }
-    fun getShow(id: Int){
-        viewModelScope.launch(Dispatchers.IO) {
-            val show = localRepository.getShow(id)
-           // deleteShow(show)
-        }
-    }
     fun getEpisode(showId: Int) {
         episodeState = ""
         viewModelScope.launch {
@@ -130,12 +121,13 @@ class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository, va
         currentShow = show
     }
 
-    fun onClickFollow(inDb: Boolean,show:SearchShow) {
+    fun onClickFollow(inDb: Boolean,show: SearchShow) {
         if(inDb){
             deleteShow(show.toLocalShow())
         } else {
             saveShow(show.id!!,show.name!!)
         }
     }
+
 }
 

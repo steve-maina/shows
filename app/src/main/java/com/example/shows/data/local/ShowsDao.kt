@@ -13,6 +13,9 @@ interface ShowsDao {
     @Query("SELECT * FROM show ORDER BY name")
     fun getShows(): Flow<List<Show>>
 
+    @Query("SELECT * FROM show ORDER BY name")
+    fun getListShows(): List<Show>
+
     @Delete
     suspend fun deleteShow(show: Show)
 

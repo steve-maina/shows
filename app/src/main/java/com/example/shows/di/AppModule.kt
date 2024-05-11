@@ -6,16 +6,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.example.shows.data.RemoteShowsRepository
-import com.example.shows.data.ShowsRepository
+import com.example.shows.data.network.RemoteShowsRepository
+import com.example.shows.data.network.ShowsRepository
 import com.example.shows.data.local.FavoriteLocalRepository
 import com.example.shows.data.local.LocalRepository
-import com.example.shows.data.local.ShowsDao
 import com.example.shows.data.local.ShowsDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -23,8 +21,6 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import retrofit2.Retrofit
 import javax.inject.Singleton
 const private val preferencesName = "dataStore1"
 
@@ -36,8 +32,6 @@ val Context.dataStore by preferencesDataStore(
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-
 
     @Singleton
     @Provides
@@ -69,6 +63,7 @@ object AppModule {
     fun providesDataStore(app: Application): DataStore<Preferences>{
         return app.dataStore
     }
+
 
     @Singleton
     @Provides

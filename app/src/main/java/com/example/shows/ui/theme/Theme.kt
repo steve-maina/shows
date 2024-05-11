@@ -46,9 +46,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun ShowsTheme(
-    darkTheme: Boolean = LocalContext.current.dataStore.data.map {
-        it[UserPreferencesRepository.IS_DARK_THEME] ?: true
-    }.stateIn(scope = rememberCoroutineScope(), initialValue = true,started = SharingStarted.WhileSubscribed(5000L)).collectAsState(initial = true).value,
+    darkTheme: Boolean,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit

@@ -79,10 +79,17 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.extra["lifecycle_version"]}")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
-    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["workmanager_version"]}")
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    // When using Kotlin.
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+
+
 
     val nav_version = "2.7.7"
 

@@ -1,10 +1,10 @@
-package com.example.shows.data
+package com.example.shows.data.network
 
 
 
-import com.example.shows.network.response.SearchShow
-import com.example.shows.network.response.ShowEpisode
-import com.example.shows.network.response.ShowResult
+import com.example.shows.data.network.response.SearchShow
+import com.example.shows.data.network.response.ShowEpisode
+import com.example.shows.data.network.response.ShowResult
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -19,7 +19,7 @@ interface ShowsRepository {
 }
 
 
-class RemoteShowsRepository (val client: HttpClient): ShowsRepository{
+class RemoteShowsRepository (val client: HttpClient): ShowsRepository {
     override suspend  fun searchShows(showName: String): List<ShowResult> {
 //        return retrofitService.searchShows(showName)
         return client.get{
