@@ -35,9 +35,6 @@ class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository, va
     var loadingState: LoadingStates by mutableStateOf(
         LoadingStates.Success
     )
-    var popFromInnerBackStack = mutableStateOf(false)
-    var detailPagesTitle = mutableStateOf("")
-    //var appBarToShow = mutableStateOf<ScaffoldAppBar?>(ScaffoldAppBar.BrandAppBar)
     val isDarkTheme = userPreferencesRepository.isDarkTheme.stateIn(scope=viewModelScope,started = SharingStarted.WhileSubscribed(5_000L),initialValue = true)
     var homeUiState by mutableStateOf(HomeUiState())
     var removeShow by mutableStateOf<Show?>(null)
@@ -65,21 +62,6 @@ class HomeViewModel @Inject constructor(val showsRepository: ShowsRepository, va
         homeUiState = homeUiState.copy(searchTerm = text)
     }
 
-//    fun setScaffoldAppBar(appBar: String){
-//        when{
-//            appBar == "home" -> {
-//                appBarToShow.value = ScaffoldAppBar.BrandAppBar
-//            }
-//            appBar == "detailPage" -> {
-//                appBarToShow.value = ScaffoldAppBar.BackAppBar
-//                detailPagesTitle.value = currentShow?.name ?: ""
-//            }
-//
-//            appBar == "favorites" -> {
-//                appBarToShow.value = ScaffoldAppBar.FavoriteAppBar
-//            }
-//        }
-//    }
 
     fun changeTheme(value: Boolean){
         viewModelScope.launch {
