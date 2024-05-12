@@ -28,9 +28,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun Favorites(setScaffoldAppBar:(String) -> Unit, episodeState: String, getEpisode: (Int) -> Unit, deleteShow: (Show) -> Unit, favoritesList: StateFlow<List<Show>>, modifier: Modifier = Modifier) {
+fun Favorites(episodeState: String, getEpisode: (Int) -> Unit, deleteShow: (Show) -> Unit, favoritesList: StateFlow<List<Show>>, modifier: Modifier = Modifier) {
 
-    setScaffoldAppBar("favorites")
     val favorites by favoritesList.collectAsState()
     if(favorites.isEmpty()){
         Box(modifier = Modifier.fillMaxSize()){
@@ -59,7 +58,6 @@ fun Favorites(setScaffoldAppBar:(String) -> Unit, episodeState: String, getEpiso
 @Composable
 fun FavoritesPreview(@PreviewParameter(FavoritesListFlowProvider::class) favoritesList: MutableStateFlow<List<Show>>) {
     Favorites(
-        setScaffoldAppBar = {},
         episodeState = stringResource(id = R.string.next_episode_date),
         getEpisode = {},
         deleteShow = {},

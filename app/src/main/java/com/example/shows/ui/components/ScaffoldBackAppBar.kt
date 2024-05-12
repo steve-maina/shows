@@ -20,14 +20,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.shows.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScaffoldBackAppBar(onClick: () -> Unit, title: String) {
+fun ScaffoldBackAppBar(
+    navController: NavHostController,
+    onClick: (String,String,NavHostController?) -> Unit,
+    title: String
+) {
     TopAppBar(title = {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClick) {
+            IconButton(onClick = {
+                navController.navigateUp()
+                onClick("home", "SHOWS",null)
+            }) {
                 Icon(imageVector = Icons.Filled.ArrowBack,contentDescription = "Go back")
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -45,10 +55,13 @@ fun ScaffoldBackAppBar(onClick: () -> Unit, title: String) {
 @Composable
 fun BackAppBar() {
     Surface(
-        modifier = Modifier.height(75.dp).width(500.dp)
+        modifier = Modifier
+            .height(75.dp)
+            .width(500.dp)
     ) {
         ScaffoldBackAppBar(
-            onClick = { },
+            navController = rememberNavController(),
+            onClick = {s1,s2,nc ->},
             title = stringResource(id = R.string.show_name_placeholder)
         )
     }

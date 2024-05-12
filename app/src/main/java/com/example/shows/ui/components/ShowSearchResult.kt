@@ -45,8 +45,8 @@ fun ShowSearchResult(onClickItem: () -> Unit, changeCurrentShow: (SearchShow) ->
         .height(115.dp)
         .fillMaxWidth()
         .clickable {
-            onClickItem()
             changeCurrentShow(show)
+            onClickItem()
         }
     ) {
 

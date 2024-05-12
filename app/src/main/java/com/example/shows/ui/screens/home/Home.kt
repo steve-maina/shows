@@ -1,5 +1,7 @@
 package com.example.shows.ui.screens.home
 
+import android.content.Context
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -38,12 +40,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -69,65 +76,23 @@ fun ShowsApp(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier){
 
-    val appBarToShow = viewModel.appBarToShow
+
+
     Scaffold(
-        topBar = {
-            AnimatedContent(
-                targetState = appBarToShow.value,
-                transitionSpec = {
-                    slideIntoContainer(
-                        animationSpec = tween(300,easing = EaseIn), towards = AnimatedContentTransitionScope.SlideDirection.Up).togetherWith(slideOutOfContainer(
-                            animationSpec = tween(300, easing = EaseOut),
-                            towards = AnimatedContentTransitionScope.SlideDirection.Down
-                        ))
-                }
-            ) { it ->
-                when (it) {
-                    is ScaffoldAppBar.FavoriteAppBar -> {
-                        CenterAlignedTopAppBar(title = {
-                            Text(
-                                text = stringResource(id = R.string.favorites),
-                                style = MaterialTheme.typography.headlineLarge
-                            )
-                        })
-                    }
-
-                    is ScaffoldAppBar.BackAppBar -> {
-                        ScaffoldBackAppBar(
-                            onClick = {
-                                viewModel.popFromInnerBackStack.value = true
-                            },
-                            title = viewModel.detailPagesTitle.value
-                        )
-                    }
-
-                    is ScaffoldAppBar.BrandAppBar -> {
-                        CenterAlignedTopAppBar(title = {
-                            Text(
-                                text = stringResource(id = R.string.app_name),
-                                style = MaterialTheme.typography.displayLarge
-                            )
-                        })
-                    }
-
-                    else -> {
-
-                    }
-                }
-            }
-        },
         bottomBar = {
             NavigationBar {
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
+
                 bottomBarScreens.forEach { screen ->
                     val selected = currentDestination?.route == screen.route
+                    val context = LocalContext.current
                     NavigationBarItem(
                         icon = {
                             Icon(painter = painterResource(screen.iconRes), contentDescription =  screen.route)
                         },
-                        onClick ={
+                        onClick = {
                                  navController.navigate(screen.route) {
                                      popUpTo(navController.graph.findStartDestination().id) {
                                          saveState = true
@@ -145,11 +110,12 @@ fun ShowsApp(
     ) {
         NavHost(navController = navController, startDestination = "home", modifier = Modifier.padding(it) ){
             composable("home"){
-                HomeNavHost(viewModel = viewModel)
+                HomeNavHost(
+                    viewModel = viewModel
+                )
             }
             composable("favorites") {
                 Favorites(
-                    setScaffoldAppBar = viewModel::setScaffoldAppBar,
                     episodeState = viewModel.episodeState,
                     getEpisode = viewModel::getEpisode,
                     deleteShow = viewModel::deleteShow,
@@ -161,29 +127,26 @@ fun ShowsApp(
 }
 
 @Composable
-fun HomeNavHost(viewModel: HomeViewModel) {
+fun HomeNavHost(
+    viewModel: HomeViewModel
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
-    if(viewModel.popFromInnerBackStack.value) {
-        viewModel.popFromInnerBackStack.value= false
-        navController.navigateUp()
-    }
+
     NavHost(navController = navController, startDestination = "home"){
         composable("home") {
             Home(
                 goToDetailsPage = {
                     navController.navigate("detailPage")
                 },
-                setScaffoldAppBar = viewModel::setScaffoldAppBar,
+
                 changeCurrentShow = viewModel::changeCurrentShow,
                 changeTheme = viewModel::changeTheme,
                 isDarkTheme = isDarkTheme,
                 deleteShow = viewModel::deleteShow,
-                episodeState = viewModel.episodeState,
-                getEpisode = viewModel::getEpisode,
                 uiState = viewModel.homeUiState,
                 onValueChange = viewModel::onValueChange,
                 saveShow = viewModel::saveShow,
@@ -194,7 +157,6 @@ fun HomeNavHost(viewModel: HomeViewModel) {
         }
         composable("detailPage") {
             DetailPage(
-                setScaffoldAppBar = viewModel::setScaffoldAppBar,
                 currentShow = viewModel.currentShow,
                 showSummary = viewModel.currentShow?.summary ?: "",
                 showUrl = viewModel.currentShow?.image?.original,
@@ -210,12 +172,9 @@ fun HomeNavHost(viewModel: HomeViewModel) {
 @Composable
 fun Home(
     goToDetailsPage: () -> Unit,
-    setScaffoldAppBar: (String) -> Unit,
     changeCurrentShow: (SearchShow) -> Unit,
     changeTheme: (Boolean) -> Unit,
     isDarkTheme:Boolean,
-    episodeState: String,
-    getEpisode: (Int) -> Unit,
     uiState: HomeUiState,
     onValueChange:(String) -> Unit,
     saveShow: (Int, String)-> Unit,
@@ -224,7 +183,6 @@ fun Home(
     doSearch: () -> Unit,
     loadingState: LoadingStates,
     modifier: Modifier = Modifier) {
-   setScaffoldAppBar("home")
     Column(modifier = modifier
         .fillMaxSize()
         .padding(8.dp)) {
@@ -233,12 +191,14 @@ fun Home(
             searchTerm = uiState.searchTerm,
             onValueChange = onValueChange,
             doSearch = doSearch,
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         )
 
         Row(horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically ,modifier = Modifier.fillMaxWidth()){
             Text("Dark Theme?")
-            Switch(checked = isDarkTheme , onCheckedChange = {darkTheme->
+            Switch(checked = isDarkTheme , onCheckedChange = { darkTheme->
                 changeTheme(darkTheme)
             })
 
@@ -296,14 +256,9 @@ val bottomBarScreens = listOf(
     Screens.Favorites
 )
 
-sealed class ScaffoldAppBar {
-    object BrandAppBar: ScaffoldAppBar()
-    object FavoriteAppBar: ScaffoldAppBar()
-    object BackAppBar: ScaffoldAppBar()
+sealed class ScaffoldAppBar(val title: String) {
+    class BrandAppBar(title: String): ScaffoldAppBar(title)
+    class FavoriteAppBar(title: String): ScaffoldAppBar(title)
+    class BackAppBar(title: String, val navController: NavHostController): ScaffoldAppBar(title)
 }
 
-
-
-fun popFromInner(navController: NavHostController){
-    if(navController.previousBackStackEntry != null) navController.popBackStack()
-}

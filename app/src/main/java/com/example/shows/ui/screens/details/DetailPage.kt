@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.shows.data.local.Show
@@ -29,14 +31,12 @@ import com.example.shows.util.removeHtml
 
 @Composable
 fun DetailPage(
-    setScaffoldAppBar: (String) -> Unit,
     currentShow: SearchShow?,
     showSummary: String,
     showUrl:String?,
     favorites: List<Show>,
     onClickFollow: (Boolean, SearchShow) -> Unit, modifier: Modifier = Modifier) {
     val inDatabase = favorites.find { it.id == currentShow?.id } != null
-    setScaffoldAppBar("detailPage")
     Column(
         modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
